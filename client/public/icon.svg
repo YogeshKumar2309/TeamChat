@@ -1,0 +1,37 @@
+<!-- Glowing purple-pink chat icon (outline) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <!-- glow filter -->
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="gp" x1="0" x2="1">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background circle subtle -->
+  <circle cx="32" cy="32" r="30" fill="#0f1720" />
+
+  <!-- bubble outline with gradient stroke and glow -->
+  <path d="M16 22c0-6.627 7.163-12 16-12s16 5.373 16 12-7.163 12-16 12c-1.98 0-3.88-0.22-5.66-0.63L20 46l2.66-9.37C17.9 36.06 16 30.95 16 22z"
+        fill="none"
+        stroke="url(#gp)"
+        stroke-width="2.6"
+        stroke-linejoin="round"
+        filter="url(#glow)"
+        opacity="0.98"
+  />
+
+  <!-- two dots -->
+  <circle cx="27" cy="28" r="2.6" fill="#fff" opacity="0.95"/>
+  <circle cx="36" cy="28" r="2.6" fill="#fff" opacity="0.95"/>
+
+  <!-- small online green notch (accent) -->
+  <circle cx="46" cy="18" r="4.2" fill="#22C55E" stroke="#081015" stroke-width="0.6"/>
+</svg>
