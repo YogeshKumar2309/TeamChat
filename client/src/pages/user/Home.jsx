@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import ChatCart from "../../components/common/ChatCart";
+import Chat from "../../components/chat/Chat";
 
 const Home = () => {
   const messagesEndRef = useRef(null);
@@ -71,7 +72,8 @@ const Home = () => {
   };
 
   return (
-    <ChatCart
+    <>
+    {/* <ChatCart
       currentChannel={currentChannel}
       messages={messages}
       page={page}
@@ -81,7 +83,9 @@ const Home = () => {
       loadMoreMessages={loadMoreMessages}
       onlineUsers={onlineUsers}
       messagesEndRef={messagesEndRef}
-    />
+    /> */}
+    <Chat/>
+    </>
   );
 };
 

@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { Circle, Plus, Users, Hash, LogOut } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Circle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useApi } from "../../hooks/useApi";
-import { useNavigate } from "react-router-dom";
+import LogoutBtn from "../common/LogoutBtn";
+import OnlineUsers from "../common/OnlineUsers";
+import ChannelList from "./ChannelList";
+import AddChannels from "./AddChannels";
 
 const chatData = {
   user: { name: "Yogesh", status: "Online" },
   channels: [
     { id: 1, name: "general" },
-    { id: 3, name: "engineering" }
   ],
   onlineUsers: [
     { id: 1, username: "alice" },
@@ -16,18 +18,23 @@ const chatData = {
   ]
 };
 
-const Sidebar = ({ isOpenSidebar, setIsOpenSidebar ,setUser}) => {
+const Sidebar = ({ isOpenSidebar, setIsOpenSidebar, setUser, user,currentChannel, setCurrentChannel }) => {
   const [showNewChannel, setShowNewChannel] = useState(false);
   const [newChannelName, setNewChannelName] = useState("");
   const [channels, setChannels] = useState(chatData.channels);
-  const [currentChannel, setCurrentChannel] = useState(chatData.channels[0]);
   const [onlineUsers] = useState(chatData.onlineUsers);
 
   const api = useApi();
-  const naviagate = useNavigate();
 
-  const handleCreateChannel = () => {
+
+  const handleCreateChannel = async () => {
     if (!newChannelName.trim()) return;
+    const res = await api.post("/channel/create", { channelName: newChannelName });
+    if (!res.success) {
+      toast.error(api.errorMsg || "Failed to create channel");
+      return;
+    }
+    toast.success(api.successMsg || "Channel created successfully");
     const newChannel = {
       id: Date.now(),
       name: newChannelName.toLowerCase().replace(/\s+/g, "-")
@@ -35,20 +42,24 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar ,setUser}) => {
     setChannels((prev) => [...prev, newChannel]);
     setNewChannelName("");
     setShowNewChannel(false);
-    setCurrentChannel(newChannel);
+    // setCurrentChannel(newChannel);
   };
 
-  const handleLogout = async () => {
-    const res = await api.post("/auth/logout");
+  useEffect(() => {
+    const fetchChannels = async () => {
+      const res = await api.get("/channel/list");
+      if (res.success) {
+        setChannels(res.data);
+        setCurrentChannel(res.data[0]);
+      } else {
+        toast.error(api.errorMsg || "Failed to fetch channels");
+      }
+    };
+    fetchChannels();
+  }, []);
 
-    if (res.success) {
-      toast.success(api.successMsg || "Logged out successfully");
-      setUser(null);
-      naviagate("/login");
-    } else {
-      toast.error(api.errorMsg);
-    }
-  };
+// console.log(currentChannel);
+
 
   return (
     <div
@@ -79,88 +90,41 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar ,setUser}) => {
         {isOpenSidebar && (
           <div className="flex items-center mt-2 text-sm">
             <Circle className="w-2 h-2 fill-green-400 text-green-400 mr-2" />
-            <span>{chatData.user.name}</span>
+            <span>{user?.username}</span>
           </div>
         )}
       </div>
 
       {/* Channels */}
       <div className="flex-1 overflow-y-auto p-4">
-        {isOpenSidebar && (
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold uppercase text-purple-300">Channels</h2>
-            <button
-              onClick={() => setShowNewChannel(!showNewChannel)}
-              className="p-1 hover:bg-purple-700 rounded"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
-        {showNewChannel && isOpenSidebar && (
-          <div className="mb-3 flex gap-2">
-            <input
-              type="text"
-              value={newChannelName}
-              onChange={(e) => setNewChannelName(e.target.value)}
-              placeholder="channel-name"
-              className="flex-1 px-2 py-1 text-sm bg-purple-700 rounded text-white placeholder-purple-400"
-              onKeyDown={(e) => e.key === "Enter" && handleCreateChannel()}
-            />
-            <button
-              onClick={handleCreateChannel}
-              className="px-2 py-1 bg-green-600 hover:bg-green-700 rounded text-xs"
-            >
-              Add
-            </button>
-          </div>
-        )}
+       <AddChannels 
+        isOpenSidebar={isOpenSidebar}
+        showNewChannel={showNewChannel}
+        newChannelName={newChannelName}
+        handleCreateChannel={handleCreateChannel}
+        setNewChannelName={setNewChannelName}
+        setShowNewChannel={setShowNewChannel}
+       />
 
         {/* Channel List */}
-        {channels.map((channel) => (
-          <button
-            key={channel.id}
-            onClick={() => setCurrentChannel(channel)}
-            className={`w-full text-left px-2 py-2 rounded mb-1 flex items-center transition-colors ${currentChannel?.id === channel.id
-                ? "bg-purple-600"
-                : "hover:bg-purple-700"
-              }`}
-          >
-            <Hash className="w-4 h-4" />
-            {isOpenSidebar && <span className="ml-3">{channel.name}</span>}
-          </button>
-        ))}
+        <ChannelList
+          channels={channels}
+          currentChannel={currentChannel}
+          setCurrentChannel={setCurrentChannel}
+          isOpenSidebar={isOpenSidebar}
+        />
       </div>
 
       {/* Online Users */}
-      <div className="border-t border-purple-700 p-4">
-        <div className="flex items-center mb-2">
-          <Users className="w-4 h-4" />
-          {isOpenSidebar && (
-            <span className="ml-2 text-sm">Online ({onlineUsers.length})</span>
-          )}
-        </div>
-
-        {onlineUsers.map((u) => (
-          <div key={u.id} className="flex items-center text-sm mb-1">
-            <Circle className="w-2 h-2 fill-green-400 text-green-400 mr-2" />
-            {isOpenSidebar ? u.username : ""}
-          </div>
-        ))}
-      </div>
+      <OnlineUsers isOpenSidebar={isOpenSidebar} onlineUsers={onlineUsers} />
 
       {/* Logout */}
-      <button
-       disabled={api.loading}
-        onClick={handleLogout}
-        className="border-t border-purple-700 p-4 flex items-center hover:bg-purple-700 transition"
-      >
-        <LogOut className="w-4 h-4" />
-        {isOpenSidebar && <span className="ml-3">{api.loading ? "Logouting..." : "Logout"}</span>}
-      </button>
+      <LogoutBtn isOpenSidebar={isOpenSidebar} setUser={setUser} />
     </div>
   );
 };
 
 export default Sidebar;
+
+
+   

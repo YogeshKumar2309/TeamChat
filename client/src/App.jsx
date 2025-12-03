@@ -38,7 +38,7 @@ const App = () => {
           isAuthenticated={isAuthenticated}
           isCheckingAuth={checkingAuth}
         />} >
-          <Route path="/" element={<HomeLayout setUser={setUser}/>} >
+          <Route path="/" element={<HomeLayout setUser={setUser} user={user}/>} >
             <Route index element={<Home />} />
           </Route>
         </Route>
