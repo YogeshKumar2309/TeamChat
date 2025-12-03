@@ -14,7 +14,7 @@ const SocketTest = () => {
             transports: ["websocket", "polling"], // WebSocket preferred, polling fallback
         });
 
-        // 2️⃣ Connection successful hone par
+        // 2️⃣ Connection successful hone par 
         socketConnection.on("connect", () => {
             console.log("✅ Connected to server:", socketConnection.id);
             setConnected(true);
