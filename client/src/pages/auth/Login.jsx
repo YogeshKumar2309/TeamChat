@@ -1,16 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useApi } from "../../hooks/useApi";
 
-const Login = () => {
+const Login = ({setUser}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const api = useApi();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log("Login Data:", data);
+  const onSubmit = async (data) => {
+    const res = await api.post("/auth/login", data);
+
+    if (res.success && res.data?.user) {
+      setUser(res.data.user);
+      toast.success(api.successMsg || "Logged in successfully");
+      navigate("/");
+    } else {
+      toast.error(api.errorMsg);
+    }
   };
 
   return (
@@ -59,10 +71,11 @@ const Login = () => {
 
           {/* Login Button */}
           <button
+            disabled={api.loading}
             type="submit"
             className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] p-3 rounded-lg mt-6 font-semibold text-sm hover:scale-105 transition-all"
           >
-            Login
+           {api.loading ? 'Loading...' :  'Login'}
           </button>
 
           {/* Register Redirect */}

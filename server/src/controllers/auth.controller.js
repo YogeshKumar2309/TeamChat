@@ -50,7 +50,6 @@ export const register = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-
     // Response
     res.status(201).json({
       message: "User registered and logged in successfully",
@@ -62,42 +61,48 @@ export const register = async (req, res) => {
   }
 };
 
-// // Login
-// export const login = async (req, res) => {
-//   const { email, password } = req.body;
+// Login
+export const login = async (req, res) => {
+  const { email, password } = req.body;
 
-//   try {
-//     // Find user
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(400).json({ message: "User not found" });
+  try {
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
 
-//     // Compare password
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(400).json({ message: "Incorrect password" });
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Incorrect password" });
 
-//     // Create JWT (1 year)
-//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "365d" });
+    // Create JWT (1 year)
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "365d",
+    });
 
-//     // Set cookie
-//     res.cookie("token", token, {
-//       httpOnly: true,
-//       maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
-//       sameSite: "None", // cross-site
-//       secure: process.env.NODE_ENV === "production" // only HTTPS in prod
-//     });
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      secure: process.env.NODE_ENV === "production", // only HTTPS in prod
+    });
 
-//     res.json({ message: "Logged in successfully", user: { id: user._id, name: user.name, email: user.email } });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
+    res.json({
+      message: "Logged in successfully",
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 
-// // Logout
-// export const logout = (req, res) => {
-//   res.clearCookie("token", {
-//     httpOnly: true,
-//     sameSite: "None",
-//     secure: process.env.NODE_ENV === "production"
-//   });
-//   res.json({ message: "Logged out successfully" });
-// };
+// Logout
+export const logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.json({ message: "Logged out successfully" });
+};

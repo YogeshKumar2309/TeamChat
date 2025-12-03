@@ -38,14 +38,20 @@ const App = () => {
           isAuthenticated={isAuthenticated}
           isCheckingAuth={checkingAuth}
         />} >
-          <Route path="/" element={<HomeLayout />} >
+          <Route path="/" element={<HomeLayout setUser={setUser}/>} >
             <Route index element={<Home />} />
           </Route>
         </Route>
 
 
 
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={
+          <PublicRoute
+            isAuthenticated={isAuthenticated}
+            isCheckingAuth={checkingAuth}>
+            <Login  setUser={setUser}/>
+          </PublicRoute>
+        } />
         <Route path="/register" element={
           <PublicRoute
             isAuthenticated={isAuthenticated}

@@ -19,7 +19,7 @@ const Register = ({setUser}) => {
 
     if (res.success && res.data?.user) {
       setUser(res.data.user);
-      toast.success(api.successMsg);
+      toast.success(api.successMsg || "Registered successfully");
       navigate("/");
     } else {
       toast.error(api.errorMsg);

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Circle, Plus, Users, Hash, LogOut } from "lucide-react";
+import toast from "react-hot-toast";
+import { useApi } from "../../hooks/useApi";
+import { useNavigate } from "react-router-dom";
 
 const chatData = {
   user: { name: "Yogesh", status: "Online" },
@@ -10,15 +13,18 @@ const chatData = {
   onlineUsers: [
     { id: 1, username: "alice" },
     { id: 2, username: "bob" },
-   ]
+  ]
 };
 
-const Sidebar = ({ isOpenSidebar, setIsOpenSidebar }) => {
+const Sidebar = ({ isOpenSidebar, setIsOpenSidebar ,setUser}) => {
   const [showNewChannel, setShowNewChannel] = useState(false);
   const [newChannelName, setNewChannelName] = useState("");
   const [channels, setChannels] = useState(chatData.channels);
   const [currentChannel, setCurrentChannel] = useState(chatData.channels[0]);
   const [onlineUsers] = useState(chatData.onlineUsers);
+
+  const api = useApi();
+  const naviagate = useNavigate();
 
   const handleCreateChannel = () => {
     if (!newChannelName.trim()) return;
@@ -32,13 +38,22 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar }) => {
     setCurrentChannel(newChannel);
   };
 
-  const handleLogout = () => alert("Logout Clicked");
+  const handleLogout = async () => {
+    const res = await api.post("/auth/logout");
+
+    if (res.success) {
+      toast.success(api.successMsg || "Logged out successfully");
+      setUser(null);
+      naviagate("/login");
+    } else {
+      toast.error(api.errorMsg);
+    }
+  };
 
   return (
     <div
-      className={`h-screen bg-purple-900 text-white flex flex-col transition-all duration-300 ${
-        isOpenSidebar ? "w-64" : "w-[70px]"
-      }`}
+      className={`h-screen bg-purple-900 text-white flex flex-col transition-all duration-300 ${isOpenSidebar ? "w-64" : "w-[70px]"
+        }`}
     >
       {/* Header */}
       <div className="p-4 border-b border-purple-700">
@@ -107,11 +122,10 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar }) => {
           <button
             key={channel.id}
             onClick={() => setCurrentChannel(channel)}
-            className={`w-full text-left px-2 py-2 rounded mb-1 flex items-center transition-colors ${
-              currentChannel?.id === channel.id
+            className={`w-full text-left px-2 py-2 rounded mb-1 flex items-center transition-colors ${currentChannel?.id === channel.id
                 ? "bg-purple-600"
                 : "hover:bg-purple-700"
-            }`}
+              }`}
           >
             <Hash className="w-4 h-4" />
             {isOpenSidebar && <span className="ml-3">{channel.name}</span>}
@@ -138,11 +152,12 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar }) => {
 
       {/* Logout */}
       <button
+       disabled={api.loading}
         onClick={handleLogout}
         className="border-t border-purple-700 p-4 flex items-center hover:bg-purple-700 transition"
       >
         <LogOut className="w-4 h-4" />
-        {isOpenSidebar && <span className="ml-3">Logout</span>}
+        {isOpenSidebar && <span className="ml-3">{api.loading ? "Logouting..." : "Logout"}</span>}
       </button>
     </div>
   );
