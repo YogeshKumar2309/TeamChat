@@ -17,7 +17,7 @@ const App = () => {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   const getUser = async () => {
-    const res = await api.get("/auth/me");
+    const res = await api.get("/api/auth/me");
     setUser(res.data?.user);
     setCheckingAuth(false);
   }

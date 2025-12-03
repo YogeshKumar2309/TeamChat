@@ -15,7 +15,7 @@ const Register = ({setUser}) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const res = await api.post("/auth/register", data);
+    const res = await api.post("/api/auth/register", data);
 
     if (res.success && res.data?.user) {
       setUser(res.data.user);

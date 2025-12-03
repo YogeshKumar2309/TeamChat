@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+  import mongoose from "mongoose";
 
 const channelSchema = new mongoose.Schema({
   userId: { 
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",    // User collection से लिंक
+    ref: "User",    
     required: true
   },
   channelName: {

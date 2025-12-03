@@ -14,7 +14,7 @@ const Login = ({setUser}) => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const res = await api.post("/auth/login", data);
+    const res = await api.post("/api/auth/login", data);
 
     if (res.success && res.data?.user) {
       setUser(res.data.user);

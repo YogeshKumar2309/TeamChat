@@ -29,7 +29,7 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar, setUser, user,currentChannel
 
   const handleCreateChannel = async () => {
     if (!newChannelName.trim()) return;
-    const res = await api.post("/channel/create", { channelName: newChannelName });
+    const res = await api.post("/api/channel/create", { channelName: newChannelName });
     if (!res.success) {
       toast.error(api.errorMsg || "Failed to create channel");
       return;
@@ -47,7 +47,7 @@ const Sidebar = ({ isOpenSidebar, setIsOpenSidebar, setUser, user,currentChannel
 
   useEffect(() => {
     const fetchChannels = async () => {
-      const res = await api.get("/channel/list");
+      const res = await api.get("/api/channel/list");
       if (res.success) {
         setChannels(res.data);
         setCurrentChannel(res.data[0]);

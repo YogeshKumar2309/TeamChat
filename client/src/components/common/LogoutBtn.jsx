@@ -9,7 +9,7 @@ const LogoutBtn = ({ isOpenSidebar,setUser }) => {
     const naviagate = useNavigate();
 
     const handleLogout = async () => {
-        const res = await api.post("/auth/logout");
+        const res = await api.post("/api/auth/logout");
         if (res.success) {
             toast.success(api.successMsg || "Logged out successfully");
             naviagate("/login");
