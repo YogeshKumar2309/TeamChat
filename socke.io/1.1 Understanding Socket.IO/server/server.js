@@ -1,30 +1,22 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import onlineUsersHandler from "./src/socket/onlineUsers.js";
+
+const FRONTEND_URL = "http://localhost:5173"; // frontend URL
 
 const app = express();
-
-// Create HTTP server (Socket.IO needs this)
 const server = http.createServer(app);
 
-// Create Socket.IO server
+// Socket.IO server with CORS
 const io = new Server(server, {
   cors: {
-    origin: "*", // later change this to your frontend URL
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
   },
 });
 
-// When a new client connects
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+// Attach the online users handler
+onlineUsersHandler(io);
 
-  // When a user disconnects
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-
-// Start server
-server.listen(3001, () => {
-  console.log("Server running on port 3001");
-});
+server.listen(3001, () => console.log("Server running on port 3001"));

@@ -1,8 +1,6 @@
 
 import { Routes, Route, Link } from "react-router-dom";
-import SocketTest from "./socket/SocketTest";
-import { SocketProvider } from "./context/SoketContext";
-import Test from "./pages/Test";
+import OnlineUsers from "./pages/OnlineUsers";
 
 
 const PageNotFound = () => {
@@ -11,29 +9,30 @@ const PageNotFound = () => {
 
 const App = () => {
   return (
-    <>
+    <>    
       <div>
         <nav className="p-4 bg-gray-100 flex gap-4">
 
 
           <Link to="/">soket</Link>
-          <Link to="/test">test</Link>
+   
 
         </nav>
-        <SocketProvider>
+      
+          <OnlineUsers/>
           <Routes>
 
             {/* <Route path="/" element={<SocketTest />} /> */}
 
 
-            <Route path="/test" element={<Test />} />
-
+  
 
             <Route path="*" element={<PageNotFound />} />
 
           </Routes>
-        </SocketProvider>
+
       </div>
+             
     </>
   )
 }
