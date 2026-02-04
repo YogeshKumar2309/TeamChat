@@ -2,8 +2,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import onlineUsersHandler from "./socket/onlineUsers.js";
-import greetingWithUserNameHandler from "./socket/greetingWithUserName.js";
-import notificationHandler from "./socket/notification.js";
+import buildChannelsHandler from "./socket/Build2channels.js";
 
 
 const FRONTEND_URL = "http://localhost:5173"; // frontend URL
@@ -21,9 +20,7 @@ const io = new Server(server, {
 
 // Attach the online users handler
 onlineUsersHandler(io);
-greetingWithUserNameHandler(io);
-notificationHandler(io);
+buildChannelsHandler(io);
 
 
 server.listen(3000, () => console.log("Server running on port 3000"));
-

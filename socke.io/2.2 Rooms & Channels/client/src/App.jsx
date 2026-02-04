@@ -1,9 +1,7 @@
 
 import { Routes, Route, Link } from "react-router-dom";
 import OnlineUsers from "./pages/OnlineUsers";
-import SendUserName from "./socket/SendUserName";
-import NotificationBox from "./socket/NotificationBox";
-
+import Channels from "./socket/Channels";
 
 
 const PageNotFound = () => {
@@ -19,8 +17,8 @@ const App = () => {
       <div>
         <nav className="p-4 bg-gray-100 flex gap-4">
           <Link to="/">soket</Link>        
-          <Link to="/sendUserName">Send UserName</Link>        
-          <Link to="/notificationBox">NotificationBox</Link>        
+          <Link to="/Channels">Channels</Link>        
+        
           </nav>
 
         <OnlineUsers />
@@ -28,8 +26,8 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<Home />} />  
-          <Route path="/sendUserName" element={<SendUserName />} />  
-          <Route path="/notificationBox" element={<NotificationBox />} />  
+          <Route path="/Channels" element={<Channels />} />  
+           
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>

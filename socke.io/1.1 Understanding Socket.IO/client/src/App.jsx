@@ -1,6 +1,7 @@
 
 import { Routes, Route, Link } from "react-router-dom";
 import OnlineUsers from "./pages/OnlineUsers";
+import SocketTest from "./socket/SocketTest";
 
 
 const PageNotFound = () => {
